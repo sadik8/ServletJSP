@@ -1,0 +1,114 @@
+drop table AccountMaster cascade constraints;
+create table AccountMaster
+(
+	accountNumber NUMBER(10) primary key,
+	accountType VARCHAR2(25) not null,
+	accountBalance NUMBER(15) not null,
+	ifscCode varchar2(10) not null,
+	openDate DATE not null
+);
+
+drop sequence accountNumber_seq;
+create sequence accountNumber_seq
+start with 1000;
+
+
+drop table Customer;
+create table Customer
+(
+	accountNumber NUMBER(10) primary key,
+	customerName VARCHAR2(50) not null,
+	email VARCHAR2(30) not null,
+	address VARCHAR2(100) not null,
+	panNO VARCHAR2(15) not null
+);
+
+drop table Transactions;
+create table Transactions
+(
+	transactionID NUMBER(10) primary key,
+	transactionDescription VARCHAR2(100),
+	dateofTransaction DATE not null,
+	transactionType VARCHAR2(1) not null,
+	transactionAmount NUMBER(15) not null,
+	accountNumber NUMBER(10) not null references AccountMaster(accountNumber)
+);
+
+drop sequence transactionId_seq;
+create sequence transactionId_seq
+start with 1;
+
+
+drop table ServiceTracker;
+create table ServiceTracker
+(
+	serviceID NUMBER(10) primary key,
+	serviceDescription VARCHAR2(100),
+	accountNumber NUMBER(10) not null references AccountMaster(accountNumber),
+	serviceRaisedDate DATE not null,
+	serviceStatus VARCHAR2(20) not null
+);
+
+drop sequence serviceId_seq;
+create sequence serviceId_seq
+start with 1;
+
+drop table UserTable;
+create table UserTable
+(
+	accountNumber NUMBER(10) not null references AccountMaster(accountNumber),
+	userId NUMBER(10) primary key,
+	loginPassword VARCHAR2(15) not null,
+	secretQuestion VARCHAR2(50) not null,
+	transactionPassword VARCHAR2(15),
+	lockStatus VARCHAR2(1) not null
+);
+
+
+drop sequence userId_seq;
+create sequence userId_seq
+start with 1000;
+
+drop table FundTransfer;
+create table FundTransfer
+(
+	fundTransferID NUMBER(10) primary key,
+	accountNumber NUMBER(10) not null references AccountMaster(accountNumber),
+	payeeAccountNumber NUMBER(10) not null,
+	dateOfTransfer DATE not null,
+	transferAmount NUMBER(15) not null
+);
+
+drop sequence fundTransfer_seq;
+create sequence fundTransfer_seq
+start with 10;
+
+drop table PayeeTable;
+create table PayeeTable
+(
+	payeeId number(10) primary key,
+	accountNumber NUMBER(10) not null references AccountMaster(accountNumber),
+	payeeAccountNumber NUMBER(10) not null references AccountMaster(accountNumber),
+	nickName VARCHAR2(40) not null
+);
+
+drop sequence payeeId_seq;
+create sequence payeeId_seq
+start with 1000;
+
+drop table admin;
+create table admin
+(
+	adminId number(10) primary key,
+	password varchar2(15)
+);
+
+INSERT INTO admin VALUES(101157,'Ss123456');
+
+INSERT INTO AccountMaster VALUES(accountNumber_seq.nextval,'SAVINGS',1000,'PUNB',sysdate);
+INSERT INTO Customer VALUES(accountNumber_seq.currval,'SADIK','s@jkl.com','kolkata','PAN');
+INSERT INTO UserTable VALUES(accountNumber_seq.currval,123456,'Ss123456','Maidan','Ss123456','U');
+
+INSERT INTO AccountMaster VALUES(accountNumber_seq.nextval,'SAVINGS',2000,'PUNB',sysdate);
+INSERT INTO Customer VALUES(accountNumber_seq.currval,'SHUBHRANIL','sh@mno.com','kolkata','PAN1');
+INSERT INTO UserTable VALUES(accountNumber_seq.currval,123457,'Ss123457','Maidan','Ss123457','U');
